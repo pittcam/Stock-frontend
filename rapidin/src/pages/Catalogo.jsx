@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { obtenerProductos } from "../api/producto";
 import { useCarrito } from "../context/CarritoContext";
 import Navbar from "../components/Navbar";
-import { BrowserRouter as Router } from "react-router-dom";
 
 export default function Catalogo() {
   const [productos, setProductos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { agregarProducto } = useCarrito();
+  const { agregarProducto, carrito } = useCarrito();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProductos = async () => {
@@ -69,6 +69,19 @@ export default function Catalogo() {
         </div>
       )}
     </div>
+
+    {/* Cart button - position it where appropriate in your UI */}
+    <button 
+      onClick={() => navigate("/carrito")}
+      className="fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg flex items-center"
+    >
+      🛒 
+      {carrito.length > 0 && (
+        <span className="ml-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+          {carrito.length}
+        </span>
+      )}
+    </button>
     </>
   );
 }
