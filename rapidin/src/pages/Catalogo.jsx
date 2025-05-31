@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { obtenerProductos } from "../api/productos";
+import { obtenerProductos } from "../api/producto";
 import { useCarrito } from "../context/CarritoContext";
 import Navbar from "../components/Navbar";
 

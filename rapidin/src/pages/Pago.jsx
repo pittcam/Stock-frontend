@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import axios from "axios";
+import Navbar from "../components/Navbar";
 
 export default function Pago() {
   const { carrito, limpiarCarrito } = useCarrito();

@@ -1,5 +1,7 @@
 import { useCarrito } from "../context/CarritoContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { BrowserRouter as Router } from "react-router-dom";
 
 export default function Carrito() {
   const { carrito, agregarProducto } = useCarrito();
@@ -15,7 +17,7 @@ export default function Carrito() {
   const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
 
   return (
-    <Rouuter>
+    <Router>
     <Navbar />
     <div>
       <h2 className="text-2xl font-bold mb-4">🛒 Tu Carrito</h2>
@@ -52,6 +54,6 @@ export default function Carrito() {
         </div>
       )}
     </div>
-    </Rouuter>
+    </Router>
   );
 }
