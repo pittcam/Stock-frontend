@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { obtenerProductos } from "../api/producto";
 import { useCarrito } from "../context/CarritoContext";
 import Navbar from "../components/Navbar";
+import { BrowserRouter as Router } from "react-router-dom";
 
 export default function Catalogo() {
   const [productos, setProductos] = useState([]);
