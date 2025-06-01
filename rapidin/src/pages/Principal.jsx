@@ -6,9 +6,7 @@ import axios from "axios";
 
 export default function Principal() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
+    <div className="min-h-screen bg-gray-50">      
       {/* Hero Section */}
       <section className="bg-green-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">

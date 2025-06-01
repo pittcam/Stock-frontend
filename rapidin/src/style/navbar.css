@@ -1,0 +1,121 @@
+.navbar-container {
+  width: 98%;
+  height: 70px;
+  position: fixed;
+  left: 0;
+  padding-right: 50px;
+  padding-top: 20px;
+  top: 0;
+  z-index: 999;
+  background: linear-gradient(to right, #003366, #0055aa);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem 1rem;
+}
+
+/* Asegurar que todo el contenido esté en una línea horizontal */
+.navbar-container > div {
+  display: flex;
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+/* Estilos para el logo (izquierda) */
+.navbar-container .flex.items-center[aria-label="Inicio"] {
+  margin-right: auto; /* Empuja todo lo demás hacia la derecha */
+  flex-shrink: 0;
+  font-size: large;
+}
+
+/* Contenedor derecho con todos los elementos */
+.navbar-container .flex.items-center.space-x-6 {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Espacio entre elementos */
+}
+
+/* Enlaces de navegación */
+.navbar-container .flex.space-x-4 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Buscador */
+.navbar-container form {
+  width: auto;
+  min-width: 250px; /* Ancho mínimo para la barra de búsqueda */
+}
+
+/* Ajustes para el campo de búsqueda */
+.navbar-container input {
+  transition: all 0.2s ease-in-out;
+  border: none;
+}
+
+.navbar-container input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Animación para el contador del carrito */
+.navbar-container .rounded-full {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Estilo para NavLinks */
+.navbar-container a {
+  color: white;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.navbar-container a:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Resaltar enlace activo */
+.navbar-container a[current="true"] {
+  font-weight: bold;
+  position: relative;
+}
+
+.navbar-container a[current="true"]::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  background-color: white;
+  border-radius: 1px;
+}
+
+/* Responsividad - aseguramos que se mantenga horizontal hasta cierto punto */
+@media (max-width: 768px) {
+  .navbar-container > div {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .navbar-container form {
+    order: 3;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  /* A partir de aquí - menú desplegable si lo necesitas */
+}

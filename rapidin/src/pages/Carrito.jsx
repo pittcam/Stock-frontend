@@ -1,6 +1,5 @@
 import { useCarrito } from "../context/CarritoContext";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { useState } from "react";
 
 export default function Carrito() {
@@ -46,7 +45,6 @@ export default function Carrito() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-8">Tu Carrito</h1>
         

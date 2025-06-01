@@ -1,27 +1,38 @@
-import { useState, useEffect } from 'react';
-import { obtenerProductos } from "../api/producto";
+import { useState, useEffect, useCallback } from 'react';
+import { fetchProductos } from '../services/productoService';
 
-export function useProductos() {
+export function useProductos(initialSearchTerm = '') {
   const [productos, setProductos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchProductos = async () => {
+  
+  // Función para buscar productos (puede usar API o filtrar localmente)
+  const buscarProductos = useCallback(async (searchTerm = '') => {
+    try {
       setIsLoading(true);
-      try {
-        const data = await obtenerProductos();
+      
+      // Hacer la solicitud al backend incluyendo el término de búsqueda
+      const data = await fetchProductos(searchTerm);
+      
+      if (data && Array.isArray(data)) {
         setProductos(data);
-      } catch (err) {
-        console.error("Error al cargar productos:", err);
-        setError("No se pudieron cargar los productos");
-      } finally {
-        setIsLoading(false);
+      } else {
+        setProductos([]);
+        if (!data) setError("No se pudieron obtener los productos");
       }
-    };
-
-    fetchProductos();
+    } catch (err) {
+      console.error('Error al buscar productos:', err);
+      setError('Error al cargar los productos. Por favor, intenta de nuevo más tarde.');
+      setProductos([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  return { productos, isLoading, error };
+  // Efecto inicial para cargar los productos
+  useEffect(() => {
+    buscarProductos(initialSearchTerm);
+  }, [initialSearchTerm, buscarProductos]);
+
+  return { productos, isLoading, error, buscarProductos };
 }
