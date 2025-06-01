@@ -1,43 +1,70 @@
 import { useState, useEffect } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useProductos } from '../hooks/useProductos';
+import axios from 'axios';
 import '../style/catalog.css';
 
 export default function Catalogo() {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // Obtenemos el parámetro de búsqueda de la URL
+  const [allProductos, setAllProductos] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { agregarProducto } = useCarrito();
+
+  // Cargar todos los productos una sola vez
+  useEffect(() => {
+    const fetchProductos = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get("http://localhost:5000/productos");
+        console.log("Datos de productos:", response.data); // Para inspeccionar los datos
+        setAllProductos(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+        setError("Error al cargar productos. Por favor, intenta de nuevo.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductos();
+  }, []);
+
+  // Extraer el término de búsqueda de la URL y actualizar estado
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const searchParam = params.get('search');
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    }
+    const searchParam = params.get('search') || '';
+    setSearchTerm(searchParam);
   }, [location.search]);
 
-  // Usar el hook con el término de búsqueda
-  const { productos, isLoading, error, buscarProductos } = useProductos(searchTerm);
-  const { agregarProducto, carrito } = useCarrito();
-
-  // Cuando cambia el término de búsqueda, actualizar productos
+  // Filtrar productos basado en término de búsqueda
   useEffect(() => {
-    buscarProductos(searchTerm);
-  }, [searchTerm, buscarProductos]);
+    if (!allProductos.length) return;
+    
+    if (!searchTerm) {
+      setProductos(allProductos);
+      return;
+    }
+    
+    const termLower = searchTerm.toLowerCase();
+    const filtered = allProductos.filter(producto => 
+      (producto.nombre && producto.nombre.toLowerCase().includes(termLower)) || 
+      (producto.descripcion && producto.descripcion.toLowerCase().includes(termLower))
+    );
+    
+    setProductos(filtered);
+  }, [searchTerm, allProductos]);
 
-  // Función para agregar directamente al carrito
-  const handleAgregarAlCarrito = (producto) => {
-    agregarProducto(producto, 1); // Agregar 1 unidad directamente
-  };
-
-  // Manejo del cambio en la búsqueda local
+  // Función para manejar cambios en el input de búsqueda
   const handleSearchChange = (e) => {
     const newTerm = e.target.value;
     setSearchTerm(newTerm);
     
-    // Actualizar la URL para reflejar la búsqueda
+    // Actualizar la URL con el nuevo término
     const searchParams = new URLSearchParams(location.search);
     if (newTerm) {
       searchParams.set('search', newTerm);
@@ -45,6 +72,11 @@ export default function Catalogo() {
       searchParams.delete('search');
     }
     navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
+  };
+
+  // Función para agregar al carrito
+  const handleAgregarAlCarrito = (producto) => {
+    agregarProducto(producto, 1);
   };
 
   return (
@@ -76,7 +108,29 @@ export default function Catalogo() {
               <div key={p.id} className="product-card">
                 <div className="product-image">
                   {p.imagen ? (
-                    <img src={p.imagen} alt={p.nombre} />
+                    <img 
+                      src={p.imagen} 
+                      alt={p.nombre} 
+                      onError={(e) => {
+                        console.log("Error cargando imagen:", p.imagen);
+                        e.target.onerror = null;
+                        
+                        // Intentar con URL alternativa
+                        if (p.imagen.includes('imagenes/')) {
+                          const filename = p.imagen.split('/').pop();
+                          const altUrl = `http://localhost:5000/imagenes/${filename}`;
+                          console.log("Intentando con URL alternativa:", altUrl);
+                          e.target.src = altUrl;
+                        } else {
+                          // Si todo falla, mostrar placeholder
+                          e.target.style.display = 'none';
+                          const placeholderDiv = document.createElement('div');
+                          placeholderDiv.className = 'placeholder-image';
+                          placeholderDiv.textContent = '📦';
+                          e.target.parentNode.appendChild(placeholderDiv);
+                        }
+                      }}
+                    />
                   ) : (
                     <div className="placeholder-image">📦</div>
                   )}
@@ -100,17 +154,8 @@ export default function Catalogo() {
         )}
       </div>
 
-      <button 
-        onClick={() => navigate("/carrito")}
-        className="fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg flex items-center"
-      >
-        🛒 
-        {carrito.length > 0 && (
-          <span className="ml-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-            {carrito.length}
-          </span>
-        )}
-      </button>
+      
+
     </>
   );
 }

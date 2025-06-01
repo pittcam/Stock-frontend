@@ -1,9 +1,10 @@
 import { useCarrito } from "../context/CarritoContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import '../style/carrito.css';
 
 export default function Carrito() {
-  const { carrito, agregarProducto } = useCarrito();
+  const { carrito, agregarProducto, eliminarProducto } = useCarrito();
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
@@ -43,20 +44,24 @@ export default function Carrito() {
   const shipping = 0; // Envío gratuito
   const total = subtotal + shipping;
 
+  const handleVenta = () => {
+    navigate("/pago");
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-8">Tu Carrito</h1>
+      <div className="cart-container">
+        <h1 className="cart-title">Tu Carrito</h1>
         
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main cart content */}
-          <div className="bg-white rounded-lg border shadow-sm lg:w-2/3 overflow-hidden">
+        <div className="cart-grid">
+          {/* Carrito principal */}
+          <div className="cart-items">
             {carrito.length === 0 ? (
-              <div className="p-8 text-center">
+              <div className="empty-cart">
                 <p className="text-gray-500 mb-4">Tu carrito está vacío</p>
                 <button 
-                  onClick={() => navigate("/")} 
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                  onClick={() => navigate("/catalogo")} 
+                  className="empty-cart-button"
                 >
                   Ir al Catálogo
                 </button>
@@ -64,119 +69,128 @@ export default function Carrito() {
             ) : (
               <>
                 {/* Header */}
-                <div className="grid grid-cols-12 gap-4 p-4 border-b font-medium text-gray-600 bg-gray-50">
-                  <div className="col-span-6">PRODUCTO</div>
-                  <div className="col-span-2 text-right">PRECIO</div>
-                  <div className="col-span-2 text-center">CANTIDAD</div>
-                  <div className="col-span-2 text-right">SUBTOTAL</div>
+                <div className="cart-header">
+                  <div className="cart-header-product">PRODUCTO</div>
+                  <div className="cart-header-price">PRECIO</div>
+                  <div className="cart-header-quantity">CANTIDAD</div>
+                  <div className="cart-header-subtotal">SUBTOTAL</div>
                 </div>
                 
-                {/* Cart Items */}
-                <div>
-                  {carrito.map(item => (
-                    <div key={item.id} className="grid grid-cols-12 gap-4 p-4 border-b items-center">
-                      <div className="col-span-6 flex items-center gap-4">
-                        <button 
-                          onClick={() => handleRemoveItem(item)} 
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          ✕
-                        </button>
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                          {item.imagen ? (
-                            <img src={item.imagen} alt={item.nombre} className="w-10 h-10 object-cover rounded-full" />
-                          ) : (
-                            <span className="text-2xl">🛍️</span>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{item.nombre}</p>
-                        </div>
+                {/* Items */}
+                {carrito.map(item => (
+                  <div key={item.id} className="cart-item">
+                    <div className="cart-product">
+                      <div className="cart-remove" onClick={() => handleRemoveItem(item)}>
+                        ✕
                       </div>
-                      <div className="col-span-2 text-right">
-                        $ {item.precio.toLocaleString()}
+                      <div className="cart-product-image">
+                        <img 
+                          src={item.imagen} 
+                          alt={item.nombre}
+                          onError={(e) => {
+                            console.log("Error cargando imagen:", item.imagen);
+                            e.target.onerror = null;
+                            
+                            // Intentar con URL alternativa
+                            if (item.imagen && item.imagen.includes('imagenes/')) {
+                              const filename = item.imagen.split('/').pop();
+                              const altUrl = `http://localhost:5000/imagenes/${filename}`;
+                              console.log("Intentando con URL alternativa:", altUrl);
+                              e.target.src = altUrl;
+                            } else {
+                              // Si todo falla, mostrar placeholder
+                              e.target.style.display = 'none';
+                              const placeholderDiv = document.createElement('div');
+                              placeholderDiv.className = 'placeholder-image';
+                              placeholderDiv.textContent = '📦';
+                              e.target.parentNode.appendChild(placeholderDiv);
+                            }
+                          }}
+                        />
                       </div>
-                      <div className="col-span-2 flex items-center justify-center">
-                        <div className="flex border rounded">
-                          <button 
-                            onClick={() => handleDecreaseQuantity(item)}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
-                            disabled={item.cantidad <= 1}
-                          >
-                            -
-                          </button>
-                          <div className="w-10 h-8 flex items-center justify-center border-x">
-                            {item.cantidad}
-                          </div>
-                          <button 
-                            onClick={() => handleIncreaseQuantity(item)}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
-                            disabled={item.cantidad >= item.stock}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                      <div className="col-span-2 text-right font-medium">
-                        $ {(item.precio * item.cantidad).toLocaleString()}
+                      <div className="cart-product-name">
+                        {item.nombre}
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="cart-price">
+                      $ {item.precio.toLocaleString()}
+                    </div>
+                    <div className="cart-quantity">
+                      <div className="quantity-control">
+                        <button 
+                          className="quantity-btn"
+                          onClick={() => handleDecreaseQuantity(item)}
+                          disabled={item.cantidad <= 1}
+                        >
+                          -
+                        </button>
+                        <div className="quantity-input">
+                          {item.cantidad}
+                        </div>
+                        <button 
+                          className="quantity-btn"
+                          onClick={() => handleIncreaseQuantity(item)}
+                          disabled={item.cantidad >= item.stock}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div className="cart-subtotal">
+                      $ {(item.precio * item.cantidad).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
               </>
             )}
             
-            {/* Coupon Section */}
-            <div className="p-4 border-t">
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  placeholder="Código de cupón"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400"
-                />
-                <button 
-                  className="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50"
-                >
-                  APLICAR CUPÓN
-                </button>
-              </div>
+            {/* Cupón */}
+            <div className="cart-coupon">
+              <input 
+                type="text" 
+                placeholder="Código de cupón"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="coupon-input"
+              />
+              <button className="coupon-button">
+                APLICAR CUPÓN
+              </button>
             </div>
           </div>
           
-          {/* Order Summary */}
+          {/* Resumen de orden */}
           {carrito.length > 0 && (
-            <div className="lg:w-1/3 bg-white border rounded-lg shadow-sm self-start sticky top-4">
-              <div className="p-4 border-b">
-                <h2 className="text-lg font-bold">TOTALES DE CARRITO</h2>
+            <div className="cart-summary">
+              <div className="summary-header">
+                <h2 className="summary-title">TOTALES DE CARRITO</h2>
               </div>
               
-              <div className="p-4 space-y-4">
-                <div className="flex justify-between">
+              <div className="summary-content">
+                <div className="summary-row">
                   <span>Subtotal</span>
                   <span className="font-medium">$ {subtotal.toLocaleString()}</span>
                 </div>
                 
-                <div className="flex justify-between">
+                <div className="summary-row">
                   <span>Envío</span>
                   <div className="text-right">
-                    <p className="text-gray-500">Envío gratuito</p>
-                    <p className="text-sm text-gray-500">Enviar a Cundinamarca.</p>
-                    <button className="text-blue-600 text-sm underline">
+                    <p className="summary-shipping">Envío gratuito</p>
+                    <p className="summary-location">Enviar a Cundinamarca.</p>
+                    <button className="change-address">
                       Cambiar dirección
                     </button>
                   </div>
                 </div>
                 
-                <div className="flex justify-between pt-4 border-t text-lg font-bold">
+                <div className="summary-total">
                   <span>Total</span>
-                  <span className="text-xl">$ {total.toLocaleString()}</span>
+                  <span>$ {total.toLocaleString()}</span>
                 </div>
                 
                 <button 
-                  onClick={() => navigate("/pago")}
-                  className="w-full py-3 bg-green-800 text-white rounded text-center font-medium hover:bg-green-900 transition mt-4"
+                  onClick={handleVenta}
+                  className="checkout-button"
                 >
                   FINALIZAR COMPRA
                 </button>
@@ -186,7 +200,7 @@ export default function Carrito() {
         </div>
       </div>
       
-      {/* Confirmation Modal */}
+      {/* Modal de confirmación */}
       {showConfirm && productToRemove && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">

@@ -1,0 +1,288 @@
+/* dashboard.css */
+
+/* Estilos generales */
+.dashboard-container {
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --gray-light: #f3f4f6;
+  --gray-medium: #d1d5db;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition-normal: all 0.3s ease;
+}
+
+/* Mejoras para las tarjetas */
+.dashboard-card {
+  transition: var(--transition-normal);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Animación para los contadores */
+.counter-value {
+  position: relative;
+  display: inline-block;
+}
+
+.counter-value.animate {
+  animation: count-up 1.5s ease-out forwards;
+}
+
+@keyframes count-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilo para las pestañas */
+.dashboard-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--gray-medium);
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-tab {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.dashboard-tab:hover {
+  color: var(--primary-color);
+}
+
+.dashboard-tab.active {
+  color: var(--primary-color);
+}
+
+.dashboard-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+}
+
+/* Mejoras para tablas */
+.dashboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.dashboard-table th {
+  background-color: var(--gray-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #4b5563;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.dashboard-table tr {
+  transition: var(--transition-normal);
+}
+
+.dashboard-table tbody tr:hover {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+.dashboard-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray-medium);
+}
+
+/* Gráficos más atractivos */
+.chart-container {
+  position: relative;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-normal);
+}
+
+.chart-container:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Animación para la carga */
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(59, 130, 246, 0.25);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mejoras de estadísticas */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-normal);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.stat-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-description {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.stat-trend-up {
+  color: var(--success-color);
+}
+
+.stat-trend-down {
+  color: var(--danger-color);
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .dashboard-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .dashboard-tab {
+    padding: 0.5rem 1rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* Estilos para impresión */
+@media print {
+  .dashboard-container {
+    padding: 0;
+  }
+  
+  .dashboard-tabs, 
+  button {
+    display: none;
+  }
+  
+  .chart-container,
+  .dashboard-card,
+  .stat-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .dashboard-table th {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+/* Añade al final del archivo - Estilos específicos para tabla con bordes */
+
+/* Estilos para tablas con bordes completos */
+.bordered-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--gray-medium);
+}
+
+.bordered-table th,
+.bordered-table td {
+  border: 1px solid var(--gray-medium);
+  padding: 0.625rem 0.75rem;
+}
+
+.bordered-table th {
+  background-color: var(--gray-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #4b5563;
+}
+
+.bordered-table tr:nth-child(odd) {
+  background-color: white;
+}
+
+.bordered-table tr:nth-child(even) {
+  background-color: var(--gray-light);
+}
+
+.bordered-table tr:hover {
+  background-color: #e5e7eb;
+}
+
+/* Estilos para tabla de productos dentro de cada celda */
+.product-subtable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-subtable tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.product-subtable tr:last-child {
+  border-bottom: none;
+}
+
+.product-subtable td {
+  border: none;
+  padding: 0.3125rem 0;
+}

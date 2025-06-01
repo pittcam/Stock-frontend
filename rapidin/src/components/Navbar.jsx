@@ -8,7 +8,10 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { carrito } = useCarrito();
-  const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+  
+  // Modificar esta línea para contar productos diferentes, no cantidades
+  const totalItems = carrito.length; // Antes: carrito.reduce((sum, item) => sum + item.cantidad, 0);
+  
   const [searchTerm, setSearchTerm] = useState('');
 
   // Recuperar el término de búsqueda de la URL si estamos en la página de catálogo
@@ -24,7 +27,6 @@ export default function Navbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Navegar a la página de catálogo con el parámetro de búsqueda
     navigate(`/catalogo${searchTerm ? `?search=${encodeURIComponent(searchTerm.trim())}` : ''}`);
   };
 

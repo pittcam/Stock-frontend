@@ -1,0 +1,198 @@
+/* Estilos del contenedor principal */
+.pago-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Estilos del encabezado */
+.pago-titulo {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.pago-titulo::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #2ecc71);
+  border-radius: 3px;
+}
+
+.pago-icono {
+  font-size: 30px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* Estilos del formulario */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #34495e;
+  font-size: 0.95rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s;
+  background-color: #f9fafc;
+}
+
+.form-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: #a0aec0;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9fafc;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+}
+
+/* Estilos para alertas y mensajes */
+.mensaje {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.mensaje-error {
+  background-color: #fff5f5;
+  color: #c53030;
+  border-left: 4px solid #fc8181;
+}
+
+.mensaje-exito {
+  background-color: #f0fff4;
+  color: #2f855a;
+  border-left: 4px solid #68d391;
+}
+
+/* Estilos para botones */
+.botones-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  font-size: 16px;
+}
+
+.btn-secundario {
+  background-color: #64748b;
+  color: white;
+}
+
+.btn-secundario:hover {
+  background-color: #475569;
+}
+
+.btn-primario {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-primario:hover {
+  background-color: #059669;
+}
+
+.btn-primario:disabled {
+  background-color: #a7f3d0;
+  cursor: not-allowed;
+}
+
+/* Estilos para el comprobante */
+.comprobante {
+  background-color: #f0fff4;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.comprobante-titulo {
+  color: #2f855a;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.comprobante-detalle {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.comprobante-item {
+  margin-bottom: 5px;
+}
+
+.comprobante-label {
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.separador {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 15px 0;
+}
+
+.lista-productos {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 15px 0;
+}
+
+.total {
+  text-align: right;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.mensaje-adicional {
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  color: #718096;
+}

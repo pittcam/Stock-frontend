@@ -7,9 +7,10 @@
   padding-top: 20px;
   top: 0;
   z-index: 999;
-  background: linear-gradient(to right, #003366, #0055aa);
+  background: linear-gradient(to right, #0b914c, #bfffe2);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   padding: 0.75rem 1rem;
+  margin-bottom: 30px;
 }
 
 /* Asegurar que todo el contenido esté en una línea horizontal */

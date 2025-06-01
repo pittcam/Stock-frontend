@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../style/pago.css"; // Asegúrate de que este archivo exista
 
 export default function Pago() {
   const { carrito, limpiarCarrito } = useCarrito();
@@ -14,6 +15,15 @@ export default function Pago() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
   const [compraExitosa, setCompraExitosa] = useState(false);
+  const [comprobante, setComprobante] = useState(null);
+
+  // Función para calcular el total del carrito
+  const calcularTotalCarrito = () => {
+    return carrito.reduce(
+      (total, item) => total + item.precio * item.cantidad,
+      0
+    );
+  };
 
   // Redirigir si el carrito está vacío
   useEffect(() => {
@@ -46,33 +56,57 @@ export default function Pago() {
     setMensaje("");
 
     try {
+      // Generar un ID único para la venta
+      const ventaId = `VNT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+      // Preparar items con toda la información de productos
+      const itemsDetallados = carrito.map((item) => ({
+        id_producto: item.id,
+        nombre_producto: item.nombre,
+        cantidad: item.cantidad,
+        precio_unitario: item.precio,
+        subtotal: item.precio * item.cantidad,
+      }));
+
+      // Usar la función local para calcular el total
+      const total = calcularTotalCarrito();
+
+      // Payload completo con toda la información
       const payload = {
+        id_venta: ventaId,
+        fecha: new Date().toISOString(),
         cliente: formData.nombreCompleto,
         cedula: formData.cedula,
         tipoPago: formData.tipoPago,
-        items: carrito.map((item) => ({
-          id_producto: item.id,
-          cantidad: item.cantidad,
-        })),
+        items: itemsDetallados,
+        total: total,
       };
 
       const response = await axios.post(
         "http://localhost:5000/registrar-venta",
         payload
       );
+
+      // Guardar el comprobante
+      setComprobante({
+        id: ventaId,
+        cliente: formData.nombreCompleto,
+        cedula: formData.cedula,
+        tipoPago: formData.tipoPago,
+        items: itemsDetallados,
+        total: total,
+        mensaje: response.data.comprobante,
+      });
+
       setMensaje(`✅ Venta registrada exitosamente`);
       setCompraExitosa(true);
       limpiarCarrito();
-
-      // Mostrar más información del comprobante
-      setTimeout(() => {
-        setMensaje((prevMensaje) => `${prevMensaje}\n\nComprobante #${Date.now().toString().slice(-6)}\nCliente: ${formData.nombreCompleto}\nCédula: ${formData.cedula}\nMétodo: ${formData.tipoPago}\n\n${response.data.comprobante}`);
-      }, 500);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
         setMensaje(`❌ Error: ${error.response.data.error}`);
       } else {
         setMensaje("❌ Error al procesar el pago. Por favor intenta de nuevo.");
+        console.error(error);
       }
     } finally {
       setLoading(false);
@@ -94,27 +128,58 @@ export default function Pago() {
   ];
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        💳 Finalizar Compra
+    <div className="pago-container">
+      <h2 className="pago-titulo">
+        <span className="pago-icono">💳</span>
+        Formulario de Pago
       </h2>
 
-      {compraExitosa ? (
+      {compraExitosa && comprobante ? (
         <div className="text-center">
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-            <p className="text-green-700 whitespace-pre-line">{mensaje}</p>
+          <div className="comprobante">
+            <h3 className="comprobante-titulo">✅ Compra Exitosa</h3>
+            <div className="comprobante-detalle">
+              <p className="comprobante-item">
+                <span className="comprobante-label">Comprobante:</span> {comprobante.id}
+              </p>
+              <p className="comprobante-item">
+                <span className="comprobante-label">Cliente:</span> {comprobante.cliente}
+              </p>
+              <p className="comprobante-item">
+                <span className="comprobante-label">Cédula:</span> {comprobante.cedula}
+              </p>
+              <p className="comprobante-item">
+                <span className="comprobante-label">Método de pago:</span>{" "}
+                {tiposDePago.find((t) => t.value === comprobante.tipoPago)?.label}
+              </p>
+              <div className="separador"></div>
+              <p className="font-bold">Productos:</p>
+              <ul className="lista-productos">
+                {comprobante.items.map((item, i) => (
+                  <li key={i}>
+                    {item.nombre_producto} x {item.cantidad} = $
+                    {item.subtotal.toLocaleString()}
+                  </li>
+                ))}
+              </ul>
+              <p className="total">
+                Total: ${comprobante.total.toLocaleString()}
+              </p>
+              <div className="separador"></div>
+              <p className="mensaje-adicional">{comprobante.mensaje}</p>
+            </div>
           </div>
           <button
             onClick={volverACatalogo}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+            className="btn btn-primario"
           >
             Volver al Catálogo
           </button>
         </div>
       ) : (
         <>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
+          <div className="form-group">
+            <label className="form-label">
               Nombre Completo:
             </label>
             <input
@@ -123,13 +188,13 @@ export default function Pago() {
               placeholder="Ej: Juan Pérez González"
               value={formData.nombreCompleto}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
               required
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
+          <div className="form-group">
+            <label className="form-label">
               Número de Cédula:
             </label>
             <input
@@ -138,20 +203,20 @@ export default function Pago() {
               placeholder="Ej: 1234567890"
               value={formData.cedula}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-input"
               required
             />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
+          <div className="form-group">
+            <label className="form-label">
               Método de Pago:
             </label>
             <select
               name="tipoPago"
               value={formData.tipoPago}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="form-select"
             >
               {tiposDePago.map((tipo) => (
                 <option key={tipo.value} value={tipo.value}>
@@ -163,29 +228,27 @@ export default function Pago() {
 
           {mensaje && (
             <div
-              className={`p-3 mb-4 rounded ${
+              className={`mensaje ${
                 mensaje.startsWith("❌")
-                  ? "bg-red-100 text-red-700"
-                  : "bg-green-100 text-green-700"
+                  ? "mensaje-error"
+                  : "mensaje-exito"
               }`}
             >
               {mensaje}
             </div>
           )}
 
-          <div className="flex justify-between">
+          <div className="botones-container">
             <button
               onClick={() => navigate("/carrito")}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition"
+              className="btn btn-secundario"
             >
               Volver al Carrito
             </button>
             <button
               onClick={handlePagar}
               disabled={loading}
-              className={`bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition ${
-                loading ? "opacity-75 cursor-not-allowed" : ""
-              }`}
+              className="btn btn-primario"
             >
               {loading ? "Procesando..." : "Confirmar Pago"}
             </button>
