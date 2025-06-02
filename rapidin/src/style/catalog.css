@@ -3,6 +3,7 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
+  padding-top: 1.5rem;
 }
 
 .product-card {
@@ -100,4 +101,28 @@
 .add-to-cart:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+/* Añadir más espacio superior para separar del navbar */
+.container {
+  margin-top: 2rem;
+}
+
+/* Estilos mejorados para el buscador */
+input[type="text"] {
+  font-size: 1.1rem;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+input[type="text"]:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+}
+
+/* Estilo para el título del catálogo */
+.text-3xl {
+  color: #2e7d32;
+  letter-spacing: -0.5px;
 }

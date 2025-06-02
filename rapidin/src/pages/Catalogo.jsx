@@ -81,16 +81,18 @@ export default function Catalogo() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8 min-h-screen">
-        <h2 className="text-2xl font-bold mb-6 text-center">Catálogo de Productos</h2>
+      {/* Aumentar el padding superior de py-8 a py-16 para más separación del navbar */}
+      <div className="container mx-auto px-4 py-16 mt-8 min-h-screen">
+        <h2 className="text-3xl font-bold mb-10 text-center">Catálogo de Productos</h2>
         
-        <div className="mb-6">
+        {/* Contenedor mejorado para el buscador */}
+        <div className="mb-8 max-w-3xl mx-auto">
           <input
             type="text"
             placeholder="Buscar productos..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-6 py-4 text-lg border-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
           />
         </div>
         
