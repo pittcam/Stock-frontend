@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import '../style/carrito.css';
 
+//Componente como función pura
 export default function Carrito() {
+  // PROGRAMACIÓN REACTIVA: Uso de useCarrito para acceder al estado del carrito y funciones
   const { carrito, agregarProducto, eliminarProducto } = useCarrito();
   const navigate = useNavigate();
+  // PROGRAMACIÓN REACTIVA: Uso de useState para manejar el estado del carrito y la confirmación de eliminación
   const [showConfirm, setShowConfirm] = useState(false);
   const [productToRemove, setProductToRemove] = useState(null);
   const [couponCode, setCouponCode] = useState("");
@@ -15,6 +18,7 @@ export default function Carrito() {
     setShowConfirm(true);
   };
 
+  // No hay mutaciones directas, solo nuevos estados mediante setters
   const confirmRemove = () => {
     if (productToRemove) {
       agregarProducto(productToRemove, -productToRemove.cantidad);
@@ -28,6 +32,7 @@ export default function Carrito() {
     setProductToRemove(null);
   };
 
+  // Funciones para aumentar y disminuir la cantidad de productos (manejo de eventos)
   const handleIncreaseQuantity = (producto) => {
     if (producto.cantidad < producto.stock) {
       agregarProducto(producto, 1);
@@ -40,6 +45,7 @@ export default function Carrito() {
     }
   };
 
+  // Uso de reduce para transformar el array en un valor único
   const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
   const shipping = 0; // Envío gratuito
   const total = subtotal + shipping;

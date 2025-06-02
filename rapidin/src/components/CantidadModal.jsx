@@ -1,14 +1,18 @@
 import { useState } from 'react';
 
+
+//recibe props y retorna JSX
 export default function CantidadModal({ producto, onConfirm, onCancel }) {
   const [cantidad, setCantidad] = useState(1);
   
+  // Funciones puras que calculan el nuevo estado basado en el estado anterior
   const handleIncrement = () => {
     if (cantidad < producto.stock) {
       setCantidad(prev => prev + 1);
     }
   };
-  
+
+  // Lógica condicional expresada declarativamente
   const handleDecrement = () => {
     if (cantidad > 1) {
       setCantidad(prev => prev - 1);

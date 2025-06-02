@@ -52,6 +52,7 @@ export default function Dashboard() {
   }, []);
 
   // Función para procesar datos por mes
+  // Agrupa las ventas por mes y calcula totales
   const procesarDatosPorMes = (datos) => {
     const ventasMes = {};
     
@@ -73,6 +74,7 @@ export default function Dashboard() {
   };
 
   // Función para procesar datos por producto
+  // Agrupa las ventas por producto y calcula cantidad y total vendido
   const procesarDatosPorProducto = (datos) => {
     const productosVendidos = {};
     
@@ -97,6 +99,7 @@ export default function Dashboard() {
   };
 
   // Configuración para gráfico de ventas por mes
+  // Utiliza los datos procesados para crear el dataset
   const chartDataMeses = {
     labels: Object.keys(ventasPorMes).map(mes => {
       const [year, month] = mes.split('-');

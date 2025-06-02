@@ -5,8 +5,10 @@ import axios from 'axios';
 import '../style/catalog.css';
 
 export default function Catalogo() {
+  // PROGRAMACIÓN REACTIVA: Uso de useLocation y useNavigate para manejar la navegación y ubicación
   const location = useLocation();
   const navigate = useNavigate();
+  // PROGRAMACIÓN REACTIVA: Uso de useState y useEffect para manejar el estado y efectos secundarios
   const [searchTerm, setSearchTerm] = useState("");
   const [allProductos, setAllProductos] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -15,6 +17,8 @@ export default function Catalogo() {
   const { agregarProducto } = useCarrito();
 
   // Cargar todos los productos una sola vez
+  // PROGRAMACIÓN REACTIVA: useEffect como suscripción que se ejecuta al montar el componente
+  // y actualiza el estado de productos
   useEffect(() => {
     const fetchProductos = async () => {
       setIsLoading(true);
@@ -35,6 +39,8 @@ export default function Catalogo() {
   }, []);
 
   // Extraer el término de búsqueda de la URL y actualizar estado
+  // PROGRAMACIÓN REACTIVA: useEffect que se ejecuta cuando cambia la ubicación
+  // y actualiza el término de búsqueda basado en los parámetros de la URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const searchParam = params.get('search') || '';
@@ -42,6 +48,8 @@ export default function Catalogo() {
   }, [location.search]);
 
   // Filtrar productos basado en término de búsqueda
+  // PROGRAMACIÓN REACTIVA: useEffect que se ejecuta cuando cambia el término de búsqueda o los productos
+  // y actualiza la lista de productos filtrados
   useEffect(() => {
     if (!allProductos.length) return;
     
@@ -60,6 +68,7 @@ export default function Catalogo() {
   }, [searchTerm, allProductos]);
 
   // Función para manejar cambios en el input de búsqueda
+  // PROGRAMACIÓN REACTIVA: Maneja el cambio en el input de búsqueda y actualiza el estado
   const handleSearchChange = (e) => {
     const newTerm = e.target.value;
     setSearchTerm(newTerm);
@@ -75,6 +84,7 @@ export default function Catalogo() {
   };
 
   // Función para agregar al carrito
+  // PROGRAMACIÓN REACTIVA: Maneja la acción de agregar un producto al carrito
   const handleAgregarAlCarrito = (producto) => {
     agregarProducto(producto, 1);
   };
